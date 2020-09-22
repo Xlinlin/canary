@@ -3,6 +3,7 @@ package com.xiaogj.x3.canary.ribbon.interceptor;
 import com.xiaogj.x3.canary.common.context.CanaryConstants;
 import com.xiaogj.x3.canary.common.context.CanaryContext;
 import com.xiaogj.x3.canary.common.context.CanaryFilterContextHolder;
+import com.xiaogj.x3.canary.common.context.TenantContextHolder;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,13 @@ public class CanaryFeignInterceptor implements RequestInterceptor {
         CanaryContext ribbonFilterContext = CanaryFilterContextHolder.getCurrentContext();
         String version = ribbonFilterContext.get(CanaryConstants.HEADER_VERSION);
         if (StringUtils.isNotEmpty(version)) {
-            log.info("2.CanaryFeignInterceptor设置灰度版本：{}到请求头中", version);
+            log.debug("2.CanaryFeignInterceptor设置灰度版本：{}到请求头中", version);
             template.header(CanaryConstants.HEADER_VERSION, version);
+        }
+        String tenant = TenantContextHolder.getCurrentContext();
+        if(StringUtils.isNotEmpty(tenant)){
+            log.debug("2.CanaryFeignInterceptor设置租户信息：{}到请求头中", tenant);
+            template.header(CanaryConstants.TENANT_KEY, tenant);
         }
     }
 }

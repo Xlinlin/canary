@@ -14,7 +14,17 @@ public interface CanaryConstants {
     String HEADER_VERSION = "x3_version";
 
     /**
+     * 服务版本号KEY
+     */
+    String SERVICE_VERSION = "version";
+
+    /**
      * 权重key
      */
     String SERVER_WEIGHT = "weight";
+
+    /**
+     * 租户 header头
+     */
+    String TENANT_KEY = "tenant";
 }

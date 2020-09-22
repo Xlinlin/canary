@@ -3,10 +3,12 @@ package com.xiaogj.x3.canary.ribbon.config;
 import com.netflix.loadbalancer.IRule;
 import com.xiaogj.x3.canary.ribbon.nacos.CanaryNacosRibbonRule;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @ClassName: CanaryGlobalLoadBalanceConfig
@@ -26,4 +28,10 @@ public class CanaryGlobalLoadBalanceConfig {
         return new CanaryNacosRibbonRule();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(RestTemplate.class)
+    public RestTemplate restTemplate(){
+        log.warn("未找到RestTemplate..初始化默认的RestTemplate");
+        return new RestTemplate();
+    }
 }

@@ -56,8 +56,13 @@ public class CanaryRestInterceptor implements ClientHttpRequestInterceptor {
         CanaryContext currentContext = CanaryFilterContextHolder.getCurrentContext();
         String version = currentContext.getAttributes().get(CanaryConstants.HEADER_VERSION);
         if (StringUtils.isNotBlank(version)) {
-            log.info("3.CanaryRestInterceptor拦截，设置版本号：{}到RestTemplate中", version);
+            log.debug("3.CanaryRestInterceptor拦截，设置版本号：{}到RestTemplate中", version);
             requestWrapper.getHeaders().add(CanaryConstants.HEADER_VERSION, version);
+        }
+        String tenant = currentContext.getAttributes().get(CanaryConstants.TENANT_KEY);
+        if (StringUtils.isNotBlank(tenant)) {
+            log.debug("3.CanaryRestInterceptor拦截，设置租户：{}到RestTemplate中", tenant);
+            requestWrapper.getHeaders().add(CanaryConstants.TENANT_KEY, tenant);
         }
         return execution.execute(requestWrapper, body);
     }

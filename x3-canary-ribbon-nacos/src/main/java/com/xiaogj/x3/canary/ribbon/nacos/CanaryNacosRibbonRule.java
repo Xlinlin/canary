@@ -99,7 +99,6 @@ public class CanaryNacosRibbonRule extends AbstractLoadBalancerRule {
         if (null == loadBalancerStats) {
             loadBalancerStats = loadBalancer.getLoadBalancerStats();
         }
-        log.debug("lb = {}", loadBalancer);
 
         // 需要请求的微服务名称
         String serviceId = loadBalancer.getName();
@@ -110,7 +109,7 @@ public class CanaryNacosRibbonRule extends AbstractLoadBalancerRule {
         if (nacosVersionPriority) {
             return getVersionServer(serviceId, namingService);
         } else {
-            return defualtChoose(serviceId, namingService);
+            return defaultChoose(serviceId, namingService);
         }
     }
 
@@ -121,7 +120,7 @@ public class CanaryNacosRibbonRule extends AbstractLoadBalancerRule {
      * @param namingService
      * @return
      */
-    private Server defualtChoose(String serviceId, NamingService namingService) {
+    private Server defaultChoose(String serviceId, NamingService namingService) {
         try {
             Instance instance = null;
             if (nacosClusterSamePriority) {
@@ -131,7 +130,7 @@ public class CanaryNacosRibbonRule extends AbstractLoadBalancerRule {
                 // 调用该方法时nacos client会自动通过基于权重的负载均衡算法选取一个实例，由底层nacos client提供实现
                 instance = namingService.selectOneHealthyInstance(serviceId);
             }
-            log.info("选择的实例是：instance = {}", instance);
+            log.debug("选择的实例是：instance = {}", instance);
 
             return new NacosServer(instance);
         } catch (NacosException e) {
@@ -272,7 +271,7 @@ public class CanaryNacosRibbonRule extends AbstractLoadBalancerRule {
 
         // 基于随机权重的负载均衡算法，从实例列表中选取一个实例
         Instance instance = ExtendBalancer.getHostByRandomWeight2(instancesToBeChosen);
-        log.info("选择的实例是：port = {}, instance = {}", instance.getPort(), instance);
+        log.debug("选择的实例是：port = {}, instance = {}", instance.getPort(), instance);
         return instance;
     }
 

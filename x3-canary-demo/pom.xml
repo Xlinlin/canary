@@ -10,6 +10,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>x3-canary-demo</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>x3-canary-demo-provider</module>
+    <module>x3-canary-demo-consumer</module>
+    <module>x3-canary-demo-gateway</module>
+  </modules>
 
 
 </project>

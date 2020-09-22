@@ -1,0 +1,19 @@
+server:
+  port: 9081
+
+xiaogj:
+  x3:
+    canary:
+      enabled: true
+
+spring:
+  application:
+    name: canary-consumer
+  cloud:
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: http://192.168.0.92:8848/
+        metadata:
+          x3_version: v1

@@ -1,6 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.xiaogj.x3.canary.ribbon.config.CanaryGlobalLoadBalanceConfig,\
-com.xiao.springcloud.loadbalancer.common.configuration.FeignInterceptorConfigurer,\
-com.xiao.springcloud.loadbalancer.common.configuration.RestTemplateConfigurer
+com.xiaogj.x3.canary.ribbon.config.CanaryGlobalLoadBalanceConfig
 
