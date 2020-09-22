@@ -50,3 +50,7 @@ spring:
           # 配置该路由的断言，通过PredicateDefinition类进行接收配置。
           #predicates:
             #- Path=/consumer/**
+xiaogj:
+  x3:
+    canary:
+      enabled: true

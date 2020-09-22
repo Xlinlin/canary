@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools;
 import org.springframework.cloud.client.loadbalancer.reactive.DefaultRequest;
-import org.springframework.cloud.client.loadbalancer.reactive.ReactiveLoadBalancer;
 import org.springframework.cloud.client.loadbalancer.reactive.Request;
 import org.springframework.cloud.client.loadbalancer.reactive.Response;
 import org.springframework.cloud.gateway.config.LoadBalancerProperties;
@@ -25,6 +24,7 @@ import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -43,17 +43,31 @@ public class CanaryLoadBalancerFilter implements GlobalFilter, Ordered {
 
     private static final Log log = LogFactory.getLog(CanaryLoadBalancerFilter.class);
 
-    private static final int LOAD_BALANCER_CLIENT_FILTER_ORDER = 10151;
+    private static final int LOAD_BALANCER_CLIENT_FILTER_ORDER = 10149;
 
-    private LoadBalancerClientFactory clientFactory;
-    private LoadBalancerProperties balancerProperties;
-    private TenantService tenantService;
+    private final LoadBalancerClientFactory clientFactory;
+    private final LoadBalancerProperties balancerProperties;
+    private final TenantService tenantService;
+    private final Environment environment;
 
+    /**
+     * 构造器
+     *
+     * @param clientFactory :
+     * @param properties :
+     * @param environment :
+     * @param tenantService :
+     * @return
+     * @author xiaolinlin
+     * @date 14:09 2020/9/22
+     **/
     public CanaryLoadBalancerFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties properties,
+        Environment environment,
         TenantService tenantService) {
         this.clientFactory = clientFactory;
         this.balancerProperties = properties;
         this.tenantService = tenantService;
+        this.environment = environment;
     }
 
     /**
@@ -74,11 +88,11 @@ public class CanaryLoadBalancerFilter implements GlobalFilter, Ordered {
         String schemePrefix = exchange.getAttribute(GATEWAY_SCHEME_PREFIX_ATTR);
 
         // 默认都走负载
-        if (url == null
-            || (!"lb".equals(url.getScheme()) && !"lb".equals(schemePrefix))) {
-            // 继续走下一个filter，并附带版本号
-            return chain.filter(exchange);
-        }
+        // if (url == null
+        //     || (!"lb".equals(url.getScheme()) && !"lb".equals(schemePrefix))) {
+        //     // 继续走下一个filter，并附带版本号
+        //     return chain.filter(exchange);
+        // }
 
         // preserve the original url
         addOriginalRequestUrl(exchange, url);
@@ -113,18 +127,7 @@ public class CanaryLoadBalancerFilter implements GlobalFilter, Ordered {
                 log.trace("LoadBalancerClientFilter url chosen: " + requestUrl);
             }
             exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, requestUrl);
-        }).then(innerFilter(exchange, chain));
-    }
-
-    private Mono<Void> innerFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // 将版本号往后端服务端传递
-        String version = exchange.getRequest().getHeaders().getFirst("version");
-        Mono<Void> filter = chain.filter(exchange);
-        if (StringUtils.isNotEmpty(version)) {
-            filter.subscriberContext(context -> context.put("version", version));
-            setHeaderInfo(exchange);
-        }
-        return filter;
+        }).then(chain.filter(exchange));
     }
 
 
@@ -173,21 +176,6 @@ public class CanaryLoadBalancerFilter implements GlobalFilter, Ordered {
         HttpHeaders headers = exchange.getRequest().getHeaders();
         Request<HttpHeaders> request = new DefaultRequest<>(headers);
         return request;
-    }
-
-    // private Mono<Response<ServiceInstance>> choose(ServerWebExchange exchange) {
-    //     URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
-    //     ReactorLoadBalancer<ServiceInstance> loadBalancer = this.clientFactory
-    //         .getInstance(uri.getHost(), ReactorLoadBalancer.class,
-    //             ServiceInstance.class);
-    //     if (loadBalancer == null) {
-    //         throw new NotFoundException("No loadbalancer available for " + uri.getHost());
-    //     }
-    //     return loadBalancer.choose(createRequest());
-    // }
-
-    private Request createRequest() {
-        return ReactiveLoadBalancer.REQUEST;
     }
 
     /**
