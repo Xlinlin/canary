@@ -4,22 +4,17 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.xiaogj.x3.platform.canary</groupId>
-  <artifactId>x3-canary</artifactId>
+  <groupId>com.xiao.platform.canary</groupId>
+  <artifactId>canary</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <parent>
-    <groupId>com.xiaogj.x3</groupId>
-    <artifactId>central-platform</artifactId>
-    <version>1.0.0</version>
-  </parent>
 
   <modules>
-    <module>x3-canary-demo</module>
-    <module>x3-canary-common</module>
-    <module>x3-cananry-gateway</module>
-    <module>x3-canary-ribbon-nacos</module>
+    <module>canary-demo</module>
+    <module>canary-common</module>
+    <module>cananry-gateway</module>
+    <module>canary-ribbon-nacos</module>
   </modules>
 
   <build>

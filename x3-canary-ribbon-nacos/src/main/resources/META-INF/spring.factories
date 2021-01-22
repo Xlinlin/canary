@@ -1,4 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.xiaogj.x3.canary.ribbon.config.CanaryGlobalLoadBalanceConfig
-
